@@ -1,0 +1,94 @@
+//Домашнее задание к лекции 2.3 «Регулярные выражения»
+'use strict';
+
+//task 1
+console.log('task 1');
+let codes = [
+	'Madam, I’m Adam',
+	'A man, a plan, a canal. Panama',
+	'----<-------Eve------->-----',
+	'[__777-x-44-x-777__]',
+	'1234564321',
+	'Olson in Oslo',
+];
+
+function checkCoupon(code) {
+	let result = code.toLowerCase().replace(/\W/g, '');
+	let strLen = result.length,
+		strReverse = result.split('').reverse().join('');
+	if (strReverse == result && result.length >= 10) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+for (let code of codes) {
+	let result = checkCoupon(code) ? 'подходит' : 'не подходит';
+	console.log(`Код «${code}» ${result}`);
+}
+
+//task 2
+console.log('task 2');
+function stripTags(text) {
+	return text.replace(/<\/?[a-z][a-z0-9]*>/gi, '');
+}
+
+const texts = [
+	'<strong>Наши</strong> <em>ховерборды</em> лучшие в <u>мире</u>!',
+	'<EM>Световой меч</EM> в <strong>каждый</strong> дом!',
+	'2 < 4 5 > 3',
+];
+
+for (let text of texts) {
+	console.log(stripTags(text));
+}
+
+//task 3
+const fields = [
+	{ name: 'name', rule: /^[a-z ]{5,}$/i },
+	{ name: 'email', rule: 'email' },
+	{ name: 'phone', rule: 'phone' },
+];
+
+const forms = [
+	{ name: 'Ivan Ivanov', email: 'ivan@test.co', phone: '+79212753690' },
+	{ name: 'III', email: 'ivan@test', phone: '11111' },
+];
+
+console.log('task 3');
+const emailRegExp = /\b[a-z0-9._-]+@[a-z_-]+(?:\.[a-z]+)+\b/;
+const phoneRegExp = /^(?:\+|\d)[\d\-\(\) ]{9,11}\d$/;
+
+function validate(form, fields) {
+	let result = true;
+
+	for (let propt in form) {
+		const checkRule = fields.filter(el => {
+			if (el.name === propt) {
+				return el;
+			}
+			return false;
+		});
+		const checkRuleValue = checkRule[0].rule;
+
+		let checkRegexp = checkRuleValue;
+		if (typeof checkRuleValue === 'string') {
+			if (checkRuleValue === 'email') checkRegexp = emailRegExp;
+			if (checkRuleValue === 'phone') checkRegexp = phoneRegExp;
+		}
+
+    result = result & checkRegexp.test(form[propt])
+	}
+
+	return result;
+}
+
+for (let form of forms) {
+	console.log(form);
+	if (validate(form, fields)) {
+		console.log('Ошибок нет');
+	} else {
+		console.log('Форма заполнена неверно');
+	}
+}
